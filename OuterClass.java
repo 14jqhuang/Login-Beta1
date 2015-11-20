@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.swing.JOptionPane;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +13,7 @@ public class OuterClass implements ActionListener
 {
 	//引入图形界面组件
 	Flow flow;
-	ResultSet res,res1,res3;
+	ResultSet res,res1,res3,res4;
 	ScheduledExecutorService ser1= Executors.newScheduledThreadPool(1);//自动切换账号
 	DataBaseconnection dbc = new DataBaseconnection();
 	
@@ -25,10 +24,10 @@ public class OuterClass implements ActionListener
 	
 	public void actionPerformed(ActionEvent e) 
 	{
-		if (e.getActionCommand()=="Summit")
+		if (e.getSource()==flow.button)
 		{
 			//判断用户名与密码是否正确，再登陆
-			int judgeflow = new JudgeLogin().judge((String)flow.user.getSelectedItem(),flow.pw.getText());
+			int judgeflow = new JudgeLogin(flow).judge((String)flow.user.getSelectedItem(),flow.pw.getText());
 				//确保用户名和密码输入正确
 				if (judgeflow==1)
 				{
@@ -54,6 +53,8 @@ public class OuterClass implements ActionListener
 							catch (SQLException e1)
 							{e1.printStackTrace();}
 						}
+						//清除la8的内容
+						flow.la8.setText("");
 					} 
 					catch (HeadlessException e2) 
 						{e2.printStackTrace();}
@@ -61,9 +62,11 @@ public class OuterClass implements ActionListener
 					catch (SQLException e2)
 					{e2.printStackTrace();}
 				}
-				else{JOptionPane.showMessageDialog(null,"亲，你还没登出哦^_^,请先登出吧,这样就能愉快地玩耍啦！！！","未登出",JOptionPane.ERROR_MESSAGE);}
+				else if(judgeflow==-1){
+					flow.la8.setText("亲，您已登陆^_^,要想切换账号，请先登出吧,这样就能愉快地玩耍啦！！！");
+					//JOptionPane.showMessageDialog(null,"亲，您已登陆^_^,要想切换账号，请先登出吧,这样就能愉快地玩耍啦！！！","未登出",JOptionPane.ERROR_MESSAGE);}
 			} 
-		
+		}
 		else if(e.getSource()==flow.trip)//自动切换账号按钮
 		{
 			/*
@@ -86,7 +89,7 @@ public class OuterClass implements ActionListener
 			ser1.scheduleAtFixedRate(new TaskSelection(flow),0,10000,TimeUnit.MILLISECONDS);
 		}
 		
-		else if (e.getActionCommand()=="Logout")
+		else if (e.getSource()==flow.button1)
 		{
 				if (flow.list.size()!=flow.list.size())
 				{
@@ -116,7 +119,7 @@ public class OuterClass implements ActionListener
 				//添加logout之前本机所产生的流量
 				flow.la4.setText("You hava logged out");
 				flow.la5.setText("");
-				flow.l5.setText("");flow.l6.setText("");flow.l7.setText("");//清空
+				flow.l5.setText("");flow.l6.setText("");flow.l7.setText("");flow.la8.setText("");//清空
 		}
 		
 		else if (e.getSource()==flow.setDefault)
@@ -126,14 +129,36 @@ public class OuterClass implements ActionListener
 			t.start();
 		}
 		
-		else if(e.getActionCommand()=="Exit")
+		else if(e.getSource()==flow.exit)
 		{
+			//从11开始重置(强制)
+			res4 = dbc.executeQuery("select * from stuacc");
+			try {
+				int num = 10000;
+				while (res4.next())
+				{
+					num++;
+					dbc.executeUpdate("update stuacc set id='"+num+"' where account='"+res4.getString(1)+"'");
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			System.exit(0);
 		}
 		
 		else if (e.getSource()==flow.clear)
 		{
 			new Dialog();
+		}
+		
+		else if (e.getSource()==flow.handset)
+		{
+			new HandSetAcc(flow);
+		}
+		
+		else if (e.getSource()==flow.handdel)
+		{
+			new DeleteInput(flow);
 		}
 	}
 }

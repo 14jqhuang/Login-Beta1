@@ -2,7 +2,12 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -36,8 +41,8 @@ public class Flow extends JPanel implements FocusListener,ItemListener
 	ResultSet res;
 	ResultSetMetaData rsmd;
 	JPanel npanel,mpanel,spanel;
-	JButton button,button1,exit,trip,setDefault,clear;
-	JLabel la1,la2,la3,la4,la5,la6,la7;//la7——specialized for account
+	JButton button,button1,exit,trip,setDefault,clear,handset,handdel;
+	JLabel la1,la2,la3,la4,la5,la6,la7,la8;//la7——specialized for account,la8——specialized for warning
 	JComboBox<String> user;
 	JTextField t4;
 	JPasswordField pw;
@@ -50,29 +55,67 @@ public class Flow extends JPanel implements FocusListener,ItemListener
 	//键值对(账号——密码)
 	Map<String,String> map;
 	ScheduledExecutorService ser4= Executors.newScheduledThreadPool(2);//流量监控
+	//初始化数组
+	String name[]=new String[10];
+		//初始化字符串
+	String nameset=" ";
+	int temp2=0;
 	
 	public Flow()
 	{
-		npanel=new JPanel();
-		spanel=new JPanel();
-		mpanel=new JPanel();
-		
+		npanel= new JPanel(){  
+			private static final long serialVersionUID = 1L;  
+
+			protected void paintComponent(Graphics g) {  
+				Graphics2D g2 = (Graphics2D) g;  
+				super.paintComponent(g);  
+				// 绘制渐变  
+				g2.setPaint(new GradientPaint(0, 0, new Color(255, 149, 100), getWidth(),  getHeight(), new Color(255, 212, 100)));  
+				g2.fillRect(0, 0, getWidth(), getHeight());  
+			}  
+		}; 
+		spanel= new JPanel(){  
+			private static final long serialVersionUID = 1L;  
+
+			protected void paintComponent(Graphics g) {  
+				Graphics2D g2 = (Graphics2D) g;  
+				super.paintComponent(g);  
+				// 绘制渐变  
+				g2.setPaint(new GradientPaint(0, 0, new Color(255, 149, 100), getWidth(),  getHeight(), new Color(255, 212, 100)));  
+				g2.fillRect(0, 0, getWidth(), getHeight());  
+			}  
+		}; 
+		mpanel= new JPanel(){  
+			private static final long serialVersionUID = 1L;  
+
+			protected void paintComponent(Graphics g) {  
+				Graphics2D g2 = (Graphics2D) g;  
+				super.paintComponent(g);  
+				// 绘制渐变  
+				
+				g2.setPaint(new GradientPaint(0, 0, new Color(255, 149, 100), getWidth(),  getHeight(), new Color(255, 212, 100)));  
+				g2.fillRect(0, 0, getWidth(), getHeight());  
+			}  
+		}; 
 		button=new DesignButton("Summit");
 		
-		button1=new JButton("Logout");
-		trip=new JButton("自动切换账号");
-		exit=new JButton("Exit");
-		setDefault=new JButton("设置为默认账号");
-		clear=new JButton("清空输入历史");
+		button1=new DesignButton("Logout");
+		trip=new DesignButton("Switch");
+		exit=new DesignButton("Exit");
+		setDefault=new DesignButton("设置当前为默认账号");
+		clear=new DesignButton("清空输入框");
+		handset=new DesignButton("自由设置默认登陆账号");
+		handdel=new DesignButton("删除某项输入");
 		
-		la1=new JLabel("Username : ",JLabel.RIGHT);
-		la2=new JLabel("Password : ",JLabel.RIGHT);
-		la3=new JLabel("将当前账号设置为默认登陆账号，以便下次自动登陆轻松上网",JLabel.CENTER);
+		la1=new JLabel("Username : ",JLabel.CENTER);
+		la2=new JLabel("Password : ",JLabel.CENTER);
+		la3=new JLabel("设置默认登陆账号，以便下次自动登陆轻松上网",JLabel.CENTER);
 		la3.setFont(new Font("宋体",Font.BOLD,14));
 		la4= new JLabel("",JLabel.CENTER);la4.setFont(new Font("宋体",Font.BOLD,20));
 		la5= new JLabel("",JLabel.CENTER);la5.setFont(new Font("宋体",Font.BOLD,14));
 		la6= new JLabel("",JLabel.CENTER);la6.setFont(new Font("宋体",Font.BOLD,19));
 		la7= new JLabel("",JLabel.CENTER);la7.setFont(new Font("宋体",Font.BOLD,25));
+		la8= new JLabel("",JLabel.LEFT);la8.setFont(new Font("宋体",Font.BOLD,15));
 		
 		//账号密码对应
 		map = new HashMap<String,String>();
@@ -94,7 +137,7 @@ public class Flow extends JPanel implements FocusListener,ItemListener
 		l5=new JLabel("",JLabel.CENTER);
 		l5.setBackground(Color.cyan);
 		l6=new JLabel("",JLabel.CENTER);
-		l7=new JLabel("800",JLabel.CENTER);
+		l7=new JLabel("",JLabel.CENTER);
 		t4=new JTextField(10);
 		//设置默认的流量额度
 		t4.setText("800");
@@ -115,13 +158,25 @@ public class Flow extends JPanel implements FocusListener,ItemListener
 		npanel.setLayout(new GridLayout(4,4));
 		mpanel.add(la4);mpanel.add(la5);
 		mpanel.setLayout(new GridLayout(2,1));
-		spanel.add(la3);spanel.add(setDefault);spanel.add(la6);spanel.add(la7);spanel.add(clear);
+		//spanel.setLayout(mgr);
+		la3.setPreferredSize(new Dimension(500, 30));
+		//la8单独一行显示
+		la8.setPreferredSize(new Dimension(550, 20));
+		//设置la8颜色为红色
+		la8.setForeground(Color.RED);
+		//自定义组件大小
+		//spanel.setLayout(new FlowLayout());
+		setDefault.setPreferredSize(new Dimension(155,30));
+		handdel.setPreferredSize(new Dimension(120,30));
+		clear.setPreferredSize(new Dimension(100,30));
+		handset.setPreferredSize(new Dimension(165,30));
+		spanel.add(la8);spanel.add(la3);spanel.add(setDefault);spanel.add(handset);spanel.add(clear);spanel.add(handdel);spanel.add(la6);spanel.add(la7);
 		
 		add(mpanel,BorderLayout.NORTH);add(npanel,BorderLayout.CENTER);add(spanel,BorderLayout.SOUTH);
 		
 		setLayout(new GridLayout(3,1));
 		setVisible(true);
-		setBounds(800,0,500,500);
+		setBounds(750,0,500,500);
 		setBackground(Color.cyan);
 		
 		button.addActionListener(new OuterClass(this));
@@ -130,8 +185,10 @@ public class Flow extends JPanel implements FocusListener,ItemListener
 		trip.addActionListener(new OuterClass(this));
 		setDefault.addActionListener(new OuterClass(this));
 		clear.addActionListener(new OuterClass(this));
+		handset.addActionListener(new OuterClass(this));
+		handdel.addActionListener(new OuterClass(this));
 		//设置有默认登陆账号后，下次会自动登陆
-		new FirstLogin();
+		new FirstLogin(this);
 		//运行程序后同时启动定时器
 		ser4.scheduleAtFixedRate(new Update(this),0,1000,TimeUnit.MILLISECONDS);//动态显示
 	}

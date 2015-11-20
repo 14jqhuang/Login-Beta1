@@ -21,7 +21,7 @@ public class DataBaseconnection {
 			System.out.println(e);//catch块处理异常.
 		}
 		try {
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/abcd","root","578178"); // 连接数据库
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/abcd","root","578111"); // 连接数据库
 
 		} catch (SQLException e) {
 			System.out.println(e);

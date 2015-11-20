@@ -26,6 +26,11 @@ public class AutoLogout extends TimerTask
 						{
 							flow.list.remove(res1.getString(3));
 						}
+						flow.la4.setText("You hava logged out");
+						flow.la5.setText(" ");
+						flow.l5.setText("");
+						flow.l6.setText("");
+						flow.l7.setText("");
 					}
 					catch (SQLException e2) 
 					{

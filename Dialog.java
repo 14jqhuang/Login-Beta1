@@ -30,7 +30,8 @@ public class Dialog extends JFrame implements ActionListener
 		setBounds(500,200,480,100);
 		setVisible(true);
 	}
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) 
+	{
 		if (e.getSource()==di1)
 		{
 			dbc.executeUpdate("delete from lazer");

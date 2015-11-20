@@ -1,7 +1,16 @@
 package login;
 
+import java.awt.HeadlessException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import javax.swing.JOptionPane;
 
 public class FirstLogin 
 {
@@ -11,22 +20,58 @@ public class FirstLogin
 	
 	DataBaseconnection dbc = new DataBaseconnection();
 	ResultSet res4;
-	public FirstLogin()
+	String temp1,username,password;
+	Flow flow;
+	public FirstLogin(Flow flow)
 	{
+		this.flow=flow;
 		res4=dbc.executeQuery("select * from stuacc where defaultacc='yes'");
-		try 
-		{
+		try {
 			while (res4.next())
 			{
-				String username=res4.getString(1);
-				String password=res4.getString(2);
+				username=res4.getString(1);
+				password=res4.getString(2);
 				new Login(username,password);
 			}
-			
-		} 
-		catch (SQLException e) 
-		{
+			URL url =new URL("http://192.168.31.4:8080/");
+
+			HttpURLConnection hurl = (HttpURLConnection) url.openConnection();
+
+			BufferedReader br;
+			br = new BufferedReader(new InputStreamReader(hurl.getInputStream()));
+			String temp;
+
+			StringBuffer sb= new StringBuffer();
+			while ((temp=br.readLine())!=null)
+			{
+				sb.append(temp);
+			}
+			temp1 = sb.toString();
+			if (temp1.contains("Password"))
+			{
+				flow.la8.setText(""+username+"(默认登陆账号) 已经修改密码了，请更正!!!");
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+//		catch (Exception e)
+//		{
+//			
+//		}
+//		catch (SQLException e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		catch (HeadlessException e) {
+//			e.printStackTrace();
+//		} catch (MalformedURLException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 }

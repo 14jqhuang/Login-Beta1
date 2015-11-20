@@ -29,7 +29,16 @@ public class TaskSelection extends TimerTask
 						 flow.la4.setText("");flow.la5.setText("流量群已全爆完，等着挨揍吧，少年");
 						 flow.l5.setText("");flow.l6.setText("");flow.l7.setText("");
 						 flow.closePane+=1;
-						 flow.trip.setEnabled(false);
+						 //账号有错才输出
+						 if (flow.temp2>=1)
+						 {
+							 for (int i=1;i<=flow.temp2;i++)
+							 {
+								 flow.nameset+=flow.name[i]+" ";
+							 }
+							 flow.la8.setText(""+flow.nameset+" 已经更改密码啦！！！或者账号无效");
+						 }
+						 //flow.trip.setEnabled(false);
 					 }
 					 catch (Exception e) 
 					 {
@@ -39,7 +48,7 @@ public class TaskSelection extends TimerTask
 				if ((Double.parseDouble(flow.l6.getText())>=Double.parseDouble(flow.t4.getText()))&&flow.list.size()!=0)
 				{
 					ser5.schedule(new AutoLogout(flow),0,TimeUnit.MILLISECONDS);
-					Thread.sleep(5000);
+					Thread.sleep(4000);
 					ser3.schedule(new AutoLogin(flow),0,TimeUnit.MILLISECONDS);//缓冲Logout
 				}
 			 }

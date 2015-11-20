@@ -1,5 +1,7 @@
 package login;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +17,10 @@ import javax.swing.JTextField;
 
 public class CorrectAcc extends JPanel implements ActionListener
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JLabel corr,toCorr,orilabel,oripassword;
 	JTextField corrText,acc;
 	JPasswordField jp;
@@ -22,7 +28,7 @@ public class CorrectAcc extends JPanel implements ActionListener
 	JPanel npanel,spanel;
 	DataBaseconnection dbc=new DataBaseconnection();
 	ResultSet res;
-	String id="middle";//记录账号位置
+	String id="middle";//记录账号位置,初始化
 	
 	public CorrectAcc()
 	{
@@ -31,27 +37,31 @@ public class CorrectAcc extends JPanel implements ActionListener
 		
 		//实例化
 		corr=new JLabel("请输入您要修改的账号 :",JLabel.CENTER);
-		toCorr=new JLabel("请修改，然后点击确定即可：",JLabel.CENTER);
+		toCorr=new JLabel("请在下面修改，然后点击确定即可：",JLabel.CENTER);
 		orilabel=new JLabel("账号 :",JLabel.CENTER);oripassword=new JLabel("密码 :",JLabel.CENTER);
 		corrText=new JTextField(10);acc=new JTextField(10);
 		jp=new JPasswordField(10);
-		sure1=new JButton("确定");sure2=new JButton("确定修改");
+		sure1=new DesignButton("确定");sure2=new DesignButton("确定修改");
 		
 		//add to contailor
 		npanel.add(corr);npanel.add(corrText);npanel.add(sure1);
+		npanel.setPreferredSize(new Dimension(500, 25));
+		toCorr.setPreferredSize(new Dimension(500, 150));
 		add(npanel);
 		add(toCorr);
-		spanel.setLayout(new GridLayout(2,2));
-		spanel.add(orilabel);spanel.add(acc);
-		spanel.add(oripassword);spanel.add(jp);
-		
+		//spanel.setPreferredSize(new Dimension(300, 60));
+		spanel.setPreferredSize(new Dimension(400, 100));
+		spanel.setLayout(new GridLayout(3,2));
+	
+		spanel.add(orilabel);spanel.add(oripassword);spanel.add(acc);
+		spanel.add(jp);spanel.add(sure2);
 		//添加监听器
 		sure1.addActionListener(this);sure2.addActionListener(this);
-		
+		sure2.setPreferredSize(new Dimension(50, 30));
 		add(spanel);
-		add(sure2);
+		//add(sure2);
 		
-		setLayout(new GridLayout(4,1));
+		setLayout(new FlowLayout());
 	}
 	
 	
@@ -59,30 +69,46 @@ public class CorrectAcc extends JPanel implements ActionListener
 	{
 		if (e.getSource()==sure1)
 		{
-			res=dbc.executeQuery("select * from stuacc where account='"+corrText.getText()+"'");
-			try {
-				if (res.next())
-				{
+			//输入不能为空，注意==和equals()的区别：equals比较的是对象的值，==用来普安短是否为同一对象
+			if (corrText.getText().equals(""))
+			{
+				JOptionPane.showMessageDialog(null, "!!!输入不能为空!!!");
+			}
+			else
+			{
+				res=dbc.executeQuery("select * from stuacc where account='"+corrText.getText()+"'");
+				try {
+					if (res.next())
+					{
 						id=res.getString(3);
 						acc.setText(res.getString(1));jp.setText(res.getString(2));
-				}
-				else 
-				{
-					JOptionPane.showMessageDialog(null,"Sorry!暂无该账号的信息，请确认好后重新输入","Wrong Usernumber",JOptionPane.ERROR_MESSAGE);
-				}
+					}
+					else 
+					{
+						JOptionPane.showMessageDialog(null,"Sorry!暂无该账号的信息，请确认好后重新输入","Wrong Usernumber",JOptionPane.ERROR_MESSAGE);
+					}
 				} 
-			catch (SQLException e1) 
-			{
-				e1.printStackTrace();
+				catch (SQLException e1) 
+				{
+					e1.printStackTrace();
+				}
 			}
 		}
 		
 		else if (e.getSource()==sure2)
 		{
-			System.out.println(id);
-			dbc.executeUpdate("update stuacc set account='"+acc.getText()+"',password='"+jp.getText()+"' where id='"+id+"'");
-			JOptionPane.showMessageDialog(null,"修改成功！","已保存",JOptionPane.OK_OPTION);
-			corrText.setText("");acc.setText("");jp.setText("");
+			//输入不能为空，注意==和equals()的区别：equals比较的是对象的值，==用来普安短是否为同一对象
+			if (corrText.getText().equals(""))
+			{
+				JOptionPane.showMessageDialog(null, "!!!亲!!!您还没输入您要修改的账号哦");
+			}
+			else
+			{
+				System.out.println(id);
+				dbc.executeUpdate("update stuacc set account='"+acc.getText()+"',password='"+jp.getText()+"' where id='"+id+"'");
+				JOptionPane.showMessageDialog(null,"修改成功！","已保存",JOptionPane.OK_OPTION);
+				corrText.setText("");acc.setText("");jp.setText("");
+			}
 		}
 	}
 

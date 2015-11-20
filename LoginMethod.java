@@ -11,7 +11,6 @@ public class LoginMethod extends JFrame
 	 */
 	private static final long serialVersionUID = 1L;
 	JTabbedPane jtp=new JTabbedPane();
-	
 	public LoginMethod()
 	{
 		jtp.add("Main Interface",new Flow());

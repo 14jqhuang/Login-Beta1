@@ -7,6 +7,8 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.util.TimerTask;
 
+import javax.swing.JOptionPane;
+
 	//自动切换Login部分
 public class AutoLogin extends TimerTask
 {
@@ -58,21 +60,29 @@ public class AutoLogin extends TimerTask
 				
 				while (flow.temp1.contains("Password"))
 				{
+					flow.temp2++;
 					//判断用户名与密码是否正确
 					flow.list.remove(flow.index);
+					flow.name[flow.temp2]=flow.acc;
+					//JOptionPane.showMessageDialog(null, "！！！"+flow.acc+" 已经更改密码啦！！！或者该账号无效！！！");
+					//Flush the web page
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
 					flow.index=(String) flow.list.get(0);
-					res=dbc.executeQuery("select * from StuAcc where id='"+flow.index+"'");//Pay attention to the blank(空格)
+					res=dbc.executeQuery("select * from stuacc where id='"+flow.index+"'");//Pay attention to the blank(空格)
 					try 
 					{
 						while (res.next())
 					  {		
 							flow.acc=res.getString(1);
 							flow.pass=res.getString(2);
-							System.out.println(flow.acc);
+						//	System.out.println(flow.acc);
 					  }
 						new Login(flow.acc,flow.pass);
-						//Flush the web page
-						Thread.sleep(3000);
+						
 						
 					}catch (Exception ex){ex.printStackTrace();}
 					try {

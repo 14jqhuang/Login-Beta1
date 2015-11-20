@@ -17,7 +17,9 @@ public class Lazerinput
 			}
 			else 
 			{
+				//同时更新lazer表和stuacc表的数据
 				dbc.executeUpdate("update lazer set password='"+pass+"' where account='"+user+"'");
+				dbc.executeUpdate("update stuacc set password='"+pass+"' where account='"+user+"'");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -5,8 +5,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +17,9 @@ import javax.swing.JTextPane;
 public class Update extends TimerTask
 {
 	Flow flow;
+	//判断是否断网（24:00）
+	String str = null;
+	SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 	ResultSet res;
 	DataBaseconnection dbc = new DataBaseconnection();
 	JTextPane jtp = new JTextPane();
@@ -25,6 +30,10 @@ public class Update extends TimerTask
 	public void run() 
 	{
 		try { 
+			//格式化时间
+			Date time = new Date(System.currentTimeMillis());
+			str = format.format(time);
+			
 			DecimalFormat df = new DecimalFormat("#0.00");
 			URL url = new URL("http://192.168.31.4:8080/");
 			//打开URL 
@@ -94,7 +103,14 @@ public class Update extends TimerTask
 			else 
 			{
 				//flow.la6.setText("当前无默认登陆账号，亲，设置默认登陆账号下次可方便快速登陆哦！！！");
-				flow.la7.setText("");}
+				flow.la7.setText("");
+			}
+			//判断时间,自动退出
+			if (str.contains("23:58:00"))
+			{
+				flow.la8.setText("系统当前已断网,系统正在为您自动退出…………");
+				System.exit(0);
+			}
 		}	
 		catch (Exception e)
 		{}
