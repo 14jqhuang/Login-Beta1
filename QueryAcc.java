@@ -30,11 +30,11 @@ public class QueryAcc extends JPanel implements ActionListener
 	//键值对
 	HashSet<String> set;//数字集合
 	DataBaseconnection dbc=new DataBaseconnection();
-	ResultSet res,res1,res2,res3;
+	ResultSet res,res1,res2,res3,res4;
 	DefaultTableModel mo1=new DefaultTableModel(new String[]{"账号"},0);
 	DefaultTableModel mo2=new DefaultTableModel(new String[]{"顺序","账号"},0);
 	JLabel Qlabel,Qlabel1,Qlabel2;
-	JButton order;
+	JButton order,update;
 	JTable Qt2;
 	JScrollPane jsp2;
 	//设置内容居中显示
@@ -54,6 +54,7 @@ public class QueryAcc extends JPanel implements ActionListener
 		Qlabel1.setForeground(Color.RED);
 		Qlabel2.setForeground(Color.magenta);
 		order = new DesignButton("排序");
+		update = new DesignButton("更新数据");
 		Qt2=new JTable(mo2);
 		Qt2.setDefaultRenderer(Object.class,tcr);
 		jsp2=new JScrollPane(Qt2);
@@ -65,7 +66,8 @@ public class QueryAcc extends JPanel implements ActionListener
 		order.setPreferredSize(new Dimension(100, 30));
 		//注册监听器
 		order.addActionListener(this);
-		add(Qlabel);add(jsp2);add(order);add(Qlabel1);add(Qlabel2);
+		update.addActionListener(this);
+		add(Qlabel);add(jsp2);add(order);add(update);add(Qlabel1);add(Qlabel2);
 		setLayout(new FlowLayout());
 		setVisible(true);
 		//Table可编辑
@@ -145,6 +147,33 @@ public class QueryAcc extends JPanel implements ActionListener
 			}
 			//不允许序号重复
 			else{Qlabel1.setText("^_^亲，您输入的序号有重复哦，请检查修改一下吧^_^");Qlabel2.setText("");}		
+		}
+		
+
+		if (e.getSource()==update)
+		{
+			try 
+			{
+				increase=0;//置零，以便更新数据时由1递增
+				res4=dbc.executeQuery("select * from stuacc");
+				mo2.setRowCount(0);
+				while (res4.next())
+				{
+					increase++;
+					Vector currow=new Vector();
+					//显示一行数据
+					currow.addElement(increase);
+					currow.addElement(res4.getString(1));
+					mo2.addRow(currow);
+				}
+				//清空提醒
+				Qlabel1.setText("");
+				Qlabel2.setText("");
+			}
+			catch (SQLException e1) 
+			{
+				e1.printStackTrace();
+			}
 		}
 	}
 }
